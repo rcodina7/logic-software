@@ -40,7 +40,7 @@ const handleCuenticaPost = async (data: parsedData) => {
 
   for await (const el of data) {
     const raw = JSON.stringify(el);
-    const requestOptions = {
+    const requestOptions: RequestInit | undefined = {
       method: "POST",
       headers: myHeaders,
       body: raw,

@@ -11,7 +11,7 @@ import Copyright from "../src/Copyright";
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import { read, utils } from "xlsx";
-import BasicTable from "../components/BasicTable";
+import BasicTable from "../components/tables/BasicTable";
 import {
   handleCuenticaPost,
   handleFetchProviders,
@@ -43,7 +43,7 @@ const File: NextPage = () => {
     };
 
     if (isLoading) fetchProviders();
-  }, []);
+  }, [isLoading]);
 
   const handleChange = (e: any) => {
     const [file] = e.target.files;
@@ -73,9 +73,15 @@ const File: NextPage = () => {
       const wb = read(bstr, { type: "binary" });
 
       const first_worksheet = wb.Sheets[wb.SheetNames[0]];
-      const excelData = utils.sheet_to_json(first_worksheet, { header: 1 });
+      const excelData: any = utils.sheet_to_json(first_worksheet, {
+        header: 1,
+      });
 
-      setFileData({ head: excelData[1], body: excelData.slice(2) });
+      const head: string[] = excelData[1];
+
+      const body = excelData.slice(2);
+
+      setFileData({ head, body });
     };
     reader.readAsBinaryString(file);
   };
