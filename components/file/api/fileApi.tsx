@@ -37,8 +37,7 @@ const handleFetchProviders = async () => {
 
 const handleCuenticaPost = async (data: parsedData) => {
   myHeaders.append("Content-Type", "application/json");
-
-  console.log(data);
+  let errors = 0;
 
   for await (const el of data) {
     const raw = JSON.stringify(el);
@@ -53,11 +52,13 @@ const handleCuenticaPost = async (data: parsedData) => {
         "https://api.cuentica.com/expense",
         requestOptions
       );
-      const data = await response.text();
+      response.status === 400 && errors++;
     } catch (error) {
       console.log(error);
     }
   }
+
+  return { success: errors === 0 ? true : false, errors };
 };
 
 export { handleFetchProviders, handleCuenticaPost };

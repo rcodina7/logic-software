@@ -10,6 +10,7 @@ import Copyright from "../src/Copyright";
 
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { read, utils } from "xlsx";
 import BasicTable from "../components/tables/BasicTable";
 import {
@@ -18,6 +19,7 @@ import {
 } from "../components/file/api/fileApi";
 import { currentProvidersType, fileInfo } from "../components/file/interfaces";
 import { formatBytes, parseBody } from "../components/file/utils";
+import BasicAlert from "../components/Alert";
 
 const Input = styled("input")({
   display: "none",
@@ -26,6 +28,11 @@ const Input = styled("input")({
 const File: NextPage = () => {
   const [fileInfo, setFileInfo] = React.useState<null | fileInfo>(null);
   const [fileData, setFileData] = React.useState<null | unknown>(null);
+  const [displayAlert, setDisplayAlert] = React.useState<null | {
+    success: string;
+    message: string;
+  }>(null);
+  const [enviando, setEnviando] = React.useState(false);
   // const [currentProviders, setCurrentProviders] =
   //   React.useState<currentProvidersType>(null);
   // const [isLoading, setIsLoading] = React.useState(true);
@@ -91,7 +98,8 @@ const File: NextPage = () => {
     setFileData(null);
   };
 
-  const handleSendFile = () => {
+  const handleSendFile = async () => {
+    setEnviando(true);
     // const parsedBodyData = parseBody(currentProviders, fileData);
     const parsedBodyData = parseBody(fileData);
 
@@ -111,11 +119,39 @@ const File: NextPage = () => {
 
     // alert("enviando datos...");
 
-    handleCuenticaPost(parsedBodyData);
+    const { success, errors } = await handleCuenticaPost(parsedBodyData);
+    ("errores son: ");
+    errors;
+
+    handleDisplayAlert(success, errors);
+  };
+
+  const handleDisplayAlert = (success: boolean, errors: number) => {
+    setDisplayAlert({
+      success: success ? "success" : "error",
+      message:
+        errors > 0
+          ? `${errors} ${errors === 1 ? "gasto" : "gastos"} no se ${
+              errors === 1 ? "ha" : "han"
+            } podido enviar`
+          : "Se ha enviado todo correctamente",
+    });
+
+    setEnviando(false);
+
+    setTimeout(() => {
+      setDisplayAlert(null);
+    }, 5000);
   };
 
   return (
     <Container maxWidth="lg">
+      {displayAlert && (
+        <BasicAlert
+          success={displayAlert.success}
+          message={displayAlert.message}
+        />
+      )}
       <Box
         sx={{
           my: 4,
@@ -166,15 +202,20 @@ const File: NextPage = () => {
             <Typography>Name: {fileInfo.name}</Typography>
             <Typography>Size: {fileInfo.size}</Typography>
             <Typography>Last modified: {fileInfo.lastModifiedDate}</Typography>
-            {fileData && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleSendFile}
-              >
-                Enviar
-              </Button>
-            )}
+            {fileData &&
+              (enviando ? (
+                <LoadingButton loading variant="outlined">
+                  Submit
+                </LoadingButton>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleSendFile}
+                >
+                  Enviar
+                </Button>
+              ))}
           </div>
         )}
       </Stack>
