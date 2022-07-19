@@ -52,7 +52,7 @@ const handleCuenticaPost = async (data: parsedData) => {
         "https://api.cuentica.com/expense",
         requestOptions
       );
-      response.status === 400 && errors++;
+      response.status !== 200 && errors++;
     } catch (error) {
       console.log(error);
     }
