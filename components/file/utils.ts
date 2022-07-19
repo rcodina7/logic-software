@@ -13,37 +13,38 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 const parseBody = (
-  currentProviders: currentProvidersType,
+  // currentProviders: currentProvidersType,
   fileData: null | any
 ) => {
   const data: parsedData = [];
 
   fileData.body.forEach((el: string | any[]) => {
-    if (el.length === 19) {
+    if (el.length === 7) {
       data.push({
         date: getDate(),
         draft: false,
-        provider: getProviderID(el[5].trim().toLowerCase(), currentProviders),
+        // provider: getProviderID(el[5].trim().toLowerCase(), currentProviders),
+        provider: 732261,
         document_type: "invoice",
-        document_number: el[3],
-        annotations: "",
+        document_number: el[0],
+        annotations: el[1],
         expense_lines: [
           {
-            description: el[8],
-            base: el[11],
-            tax: el[12] * 100,
-            retention: el[14] > 0 ? el[14] * 100 : el[14],
-            imputation: el[16] > 0 ? el[16] * 100 : el[16],
-            expense_type: el[9].split(" ")[0],
+            description: el[6],
+            base: el[4] / 1.21,
+            tax: 21,
+            retention: 0,
+            imputation: 1,
+            expense_type: "6230005",
             investment: false,
           },
         ],
         payments: [
           {
             date: false,
-            amount: el[17],
+            amount: el[4],
             payment_method: "cash",
-            paid: false,
+            paid: el[5].toLowerCase().trim() === "pagado" ? true : false,
             origin_account: 47646,
             destination_account: "B87625489",
           },
@@ -62,21 +63,21 @@ function getDate() {
   return formatedDate;
 }
 
-const getProviderID = (CIF: string, currentProviders: currentProvidersType) => {
-  const test = currentProviders?.find((el: { cif: string; id: any }) =>
-    el.cif === CIF ? el.id : ""
-  );
+// const getProviderID = (CIF: string, currentProviders: currentProvidersType) => {
+//   const test = currentProviders?.find((el: { cif: string; id: any }) =>
+//     el.cif === CIF ? el.id : ""
+//   );
 
-  console.log(
-    "Para el CIF: " +
-      CIF +
-      " Se ha encontrado el ID: " +
-      test?.id +
-      " y el CIF : " +
-      test?.cif
-  );
+//   console.log(
+//     "Para el CIF: " +
+//       CIF +
+//       " Se ha encontrado el ID: " +
+//       test?.id +
+//       " y el CIF : " +
+//       test?.cif
+//   );
 
-  return test?.id;
-};
+//   return test?.id;
+// };
 
 export { formatBytes, parseBody };

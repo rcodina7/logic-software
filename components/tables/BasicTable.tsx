@@ -29,9 +29,9 @@ export default function BasicTable({ fileData }) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {fileData.head.map((column) => (
+              {fileData.head.map((column, index) => (
                 <TableCell
-                  key={column.id}
+                  key={index}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >

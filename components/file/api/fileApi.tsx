@@ -38,6 +38,8 @@ const handleFetchProviders = async () => {
 const handleCuenticaPost = async (data: parsedData) => {
   myHeaders.append("Content-Type", "application/json");
 
+  console.log(data);
+
   for await (const el of data) {
     const raw = JSON.stringify(el);
     const requestOptions: RequestInit | undefined = {

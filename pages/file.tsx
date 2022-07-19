@@ -26,24 +26,24 @@ const Input = styled("input")({
 const File: NextPage = () => {
   const [fileInfo, setFileInfo] = React.useState<null | fileInfo>(null);
   const [fileData, setFileData] = React.useState<null | unknown>(null);
-  const [currentProviders, setCurrentProviders] =
-    React.useState<currentProvidersType>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+  // const [currentProviders, setCurrentProviders] =
+  //   React.useState<currentProvidersType>(null);
+  // const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    const fetchProviders = async () => {
-      const providers = await handleFetchProviders();
+  // React.useEffect(() => {
+  //   const fetchProviders = async () => {
+  //     const providers = await handleFetchProviders();
 
-      if (!providers.success) {
-        return alert("algo ha ido mal..." + providers.error);
-      }
+  //     if (!providers.success) {
+  //       return alert("algo ha ido mal..." + providers.error);
+  //     }
 
-      setCurrentProviders(providers.data);
-      setIsLoading(false);
-    };
+  //     setCurrentProviders(providers.data);
+  //     setIsLoading(false);
+  //   };
 
-    if (isLoading) fetchProviders();
-  }, [isLoading]);
+  //   if (isLoading) fetchProviders();
+  // }, [isLoading]);
 
   const handleChange = (e: any) => {
     const [file] = e.target.files;
@@ -77,9 +77,9 @@ const File: NextPage = () => {
         header: 1,
       });
 
-      const head: string[] = excelData[1];
+      const head: string[] = excelData[0];
 
-      const body = excelData.slice(2);
+      const body = excelData.slice(1);
 
       setFileData({ head, body });
     };
@@ -92,23 +92,24 @@ const File: NextPage = () => {
   };
 
   const handleSendFile = () => {
-    const parsedBodyData = parseBody(currentProviders, fileData);
+    // const parsedBodyData = parseBody(currentProviders, fileData);
+    const parsedBodyData = parseBody(fileData);
 
-    const parsedExcelTotalAmount = parsedBodyData
-      .reduce((prev, curr) => prev + curr.payments[0].amount, 0)
-      .toFixed(2);
+    // const parsedExcelTotalAmount = parsedBodyData
+    //   .reduce((prev, curr) => prev + curr.payments[0].amount, 0)
+    //   .toFixed(2);
 
-    const excelTotalAmount =
-      fileData.body[fileData.body.length - 1][17].toFixed(2);
+    // const excelTotalAmount =
+    //   fileData.body[fileData.body.length - 1][17].toFixed(2);
 
-    const numbersMatch = parsedExcelTotalAmount === excelTotalAmount;
+    // const numbersMatch = parsedExcelTotalAmount === excelTotalAmount;
 
-    if (!numbersMatch)
-      return alert(
-        "Cuidado el importe total de la factura en excel y el importe total de los datos entrados, no coincide"
-      );
+    // if (!numbersMatch)
+    //   return alert(
+    //     "Cuidado el importe total de la factura en excel y el importe total de los datos entrados, no coincide"
+    //   );
 
-    alert("enviando datos...");
+    // alert("enviando datos...");
 
     handleCuenticaPost(parsedBodyData);
   };
